@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#101714">
+    <title>Visão financeira</title>
+    <link rel="stylesheet" href="./dashboard.css">
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <a class="brand" href="/" aria-label="Finança, início">
+            <span class="brand-mark">f.</span>
+            <span>finança<span class="brand-period">.</span></span>
+        </a>
+        <div class="nav-label">VISÃO GERAL</div>
+        <a class="nav-link active" href="#dashboard"><span class="nav-icon">◫</span> Dashboard</a>
+        <a class="nav-link" href="#transactions"><span class="nav-icon">↕</span> Movimentações</a>
+        <div class="sidebar-bottom">
+            <span class="online-dot"></span>
+            <span>Seu dinheiro, em foco.</span>
+        </div>
+    </aside>
+
+    <main class="main-content" id="dashboard">
+        <header class="topbar">
+            <div class="breadcrumbs">Painel <span>/</span> <strong>Visão geral</strong></div>
+            <div class="top-actions">
+                <label class="theme-switch" title="Alternar tema">
+                    <input type="checkbox" id="theme-toggle" aria-label="Alternar tema claro e escuro">
+                    <span class="switch-track"><span class="switch-thumb"></span></span>
+                    <span id="theme-label">Escuro</span>
+                </label>
+                <span class="avatar" aria-hidden="true">F</span>
+            </div>
+        </header>
+
+        <section class="page-heading">
+            <div>
+                <p class="eyebrow">SEU RESUMO FINANCEIRO</p>
+                <h1>Visão financeira<span class="heading-dot">.</span></h1>
+                <p class="subtitle">Acompanhe seu dinheiro com clareza e tranquilidade.</p>
+            </div>
+            <div class="data-actions">
+                <label class="button button-secondary file-button">
+                    <span aria-hidden="true">↑</span> Importar JSON
+                    <input type="file" id="json-file" accept=".json,application/json" hidden>
+                </label>
+                <button class="button button-secondary" id="url-toggle" type="button"><span aria-hidden="true">↗</span> Conectar fonte</button>
+                <button class="button button-primary" id="refresh-button" type="button"><span aria-hidden="true">↻</span> Atualizar</button>
+            </div>
+        </section>
+
+        <section class="source-panel hidden" id="source-panel" aria-label="Conectar fonte de dados">
+            <label for="source-url">URL que retorna o JSON da View</label>
+            <div class="source-input-row">
+                <input id="source-url" type="url" placeholder="https://api.exemplo.com/movimentacoes">
+                <button class="button button-primary" id="load-url" type="button">Carregar dados</button>
+            </div>
+            <p>A resposta pode ser uma lista ou um objeto com a lista em <code>valor</code> ou <code>data</code>.</p>
+        </section>
+
+        <div class="status-banner" id="status-banner" role="status">
+            <span class="status-indicator"></span>
+            <span id="status-message">Importe um JSON ou conecte uma fonte para visualizar seus dados.</span>
+            <button type="button" class="demo-link" id="demo-button">Visualizar demonstração</button>
+        </div>
+
+        <section class="filters-card" aria-labelledby="filters-title">
+            <div class="section-title-row">
+                <div>
+                    <h2 id="filters-title">Filtros</h2>
+                    <p class="section-caption">Personalize o período e os dados exibidos</p>
+                </div>
+                <button class="text-button" type="button" id="clear-filters">Limpar filtros <span aria-hidden="true">↺</span></button>
+            </div>
+            <div class="filters-grid">
+                <label class="filter-field">
+                    <span>Período</span>
+                    <div class="period-fields">
+                        <select id="filter-month" aria-label="Mês"><option value="">Todos os meses</option></select>
+                        <select id="filter-year" aria-label="Ano"><option value="">Todos os anos</option></select>
+                    </div>
+                </label>
+                <label class="filter-field">
+                    <span>Data inicial</span>
+                    <input type="date" id="filter-from">
+                </label>
+                <label class="filter-field">
+                    <span>Data final</span>
+                    <input type="date" id="filter-to">
+                </label>
+                <label class="filter-field">
+                    <span>Banco / conta</span>
+                    <select id="filter-account"><option value="">Todas as contas</option></select>
+                </label>
+                <label class="filter-field">
+                    <span>Categoria</span>
+                    <select id="filter-category"><option value="">Todas as categorias</option></select>
+                </label>
+                <label class="filter-field">
+                    <span>Tipo de relatório</span>
+                    <select id="filter-report"><option value="">Todos os tipos</option></select>
+                </label>
+            </div>
+        </section>
+
+        <section class="kpi-grid" aria-label="Indicadores financeiros">
+            <article class="kpi-card">
+                <div class="kpi-top"><span class="kpi-label">Total de entradas</span><span class="kpi-icon icon-green">↗</span></div>
+                <div class="kpi-value" id="kpi-income">R$ 0,00</div>
+                <div class="kpi-foot"><span class="trend positive">↑</span><span>Créditos e resgates no período</span></div>
+                <div class="kpi-accent accent-green"></div>
+            </article>
+            <article class="kpi-card">
+                <div class="kpi-top"><span class="kpi-label">Total de saídas</span><span class="kpi-icon icon-red">↘</span></div>
+                <div class="kpi-value" id="kpi-expenses">R$ 0,00</div>
+                <div class="kpi-foot"><span class="trend negative">↓</span><span>Débitos e aplicações no período</span></div>
+                <div class="kpi-accent accent-red"></div>
+            </article>
+            <article class="kpi-card">
+                <div class="kpi-top"><span class="kpi-label">Saldo líquido</span><span class="kpi-icon icon-blue">◈</span></div>
+                <div class="kpi-value" id="kpi-net">R$ 0,00</div>
+                <div class="kpi-foot"><span class="trend neutral">=</span><span>Entradas menos saídas</span></div>
+                <div class="kpi-accent accent-blue"></div>
+            </article>
+            <article class="kpi-card">
+                <div class="kpi-top"><span class="kpi-label">Total investido</span><span class="kpi-icon icon-purple">⌁</span></div>
+                <div class="kpi-value" id="kpi-invested">R$ 0,00</div>
+                <div class="kpi-foot"><span class="trend invested">✳</span><span>Aportes e aplicações</span></div>
+                <div class="kpi-accent accent-purple"></div>
+            </article>
+        </section>
+
+        <section class="charts-grid" aria-label="Gráficos financeiros">
+            <article class="panel flow-panel">
+                <div class="panel-heading">
+                    <div><h2>Fluxo de caixa</h2><p class="section-caption">Entradas e saídas ao longo do período</p></div>
+                    <div class="chart-legend"><span><i class="legend-dot green-dot"></i>Entradas</span><span><i class="legend-dot red-dot"></i>Saídas</span></div>
+                </div>
+                <div class="chart-wrap flow-chart" id="flow-chart"></div>
+            </article>
+            <article class="panel category-panel">
+                <div class="panel-heading">
+                    <div><h2>Despesas por categoria</h2><p class="section-caption">Como suas saídas se distribuem</p></div>
+                    <span class="panel-menu" aria-hidden="true">···</span>
+                </div>
+                <div class="donut-layout" id="category-chart"></div>
+            </article>
+            <article class="panel investments-panel">
+                <div class="panel-heading">
+                    <div><h2>Investimentos &amp; resgates</h2><p class="section-caption">Aportes comparados com resgates</p></div>
+                    <div class="chart-legend"><span><i class="legend-dot purple-dot"></i>Aportes</span><span><i class="legend-dot teal-dot"></i>Resgates</span></div>
+                </div>
+                <div class="bar-chart" id="investment-chart"></div>
+            </article>
+            <article class="panel income-panel">
+                <div class="panel-heading">
+                    <div><h2>Origem das rendas</h2><p class="section-caption">Principais fontes de crédito</p></div>
+                    <span class="panel-menu" aria-hidden="true">···</span>
+                </div>
+                <div class="horizontal-chart" id="income-chart"></div>
+            </article>
+        </section>
+
+        <section class="panel transactions-panel" id="transactions">
+            <div class="panel-heading transactions-heading">
+                <div><h2>Movimentações</h2><p class="section-caption">Detalhamento das entradas e saídas do período</p></div>
+                <span class="results-count" id="results-count">0 registros</span>
+            </div>
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                    <tr>
+                        <th><button class="sort-button" data-sort="date">Data <span>↕</span></button></th>
+                        <th><button class="sort-button" data-sort="description">Descrição <span>↕</span></button></th>
+                        <th><button class="sort-button" data-sort="category">Categoria <span>↕</span></button></th>
+                        <th><button class="sort-button" data-sort="account">Banco / conta <span>↕</span></button></th>
+                        <th><button class="sort-button" data-sort="type">Tipo <span>↕</span></button></th>
+                        <th class="align-right"><button class="sort-button" data-sort="credit">Crédito <span>↕</span></button></th>
+                        <th class="align-right"><button class="sort-button" data-sort="debit">Débito <span>↕</span></button></th>
+                    </tr>
+                    </thead>
+                    <tbody id="transactions-body"></tbody>
+                </table>
+            </div>
+            <div class="table-footer">
+                <span id="page-summary">Mostrando 0–0 de 0</span>
+                <div class="pagination">
+                    <button class="page-button" id="previous-page" type="button" aria-label="Página anterior">‹</button>
+                    <span id="page-number">1 / 1</span>
+                    <button class="page-button" id="next-page" type="button" aria-label="Próxima página">›</button>
+                </div>
+            </div>
+        </section>
+        <footer class="footer"><span>Finança<span class="brand-period">.</span> <span id="footer-year"></span></span><span>Seus dados financeiros, organizados para você.</span></footer>
+    </main>
+</div>
+<script src="./dashboard.js" defer></script>
+</body>
+</html>

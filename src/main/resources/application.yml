@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: api-financa
+  datasource:
+    url: jdbc:postgresql://localhost:5432/Conta
+    username: postgres
+    password: Sata2811@
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+
+server:
+  port: 8080
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+# --- Configuração de Logging (DEBUG e TRACE) ---
+logging:
+  level:
+    # Log de queries SQL executadas pelo Hibernate
+    #org.hibernate.SQL: DEBUG
+    # Log dos parâmetros (bindings) passados nas queries
+    #org.hibernate.orm.jdbc.bind: TRACE
+    # Log da extração e criação de esquema/metadados (onde está ocorrendo o seu erro)
+    #org.hibernate.tool.schema: TRACE
+    # Log das conexões do HikariCP (pool de conexões)
+    #com.zaxxer.hikari: DEBUG
