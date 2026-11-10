@@ -1,6 +1,7 @@
 package br.com.apifinanca.controller;
 
 import br.com.apifinanca.dto.BasMovimentacaoLancamentoRequest;
+import br.com.apifinanca.dto.BasMovimentacaoAtualizarDto;
 import br.com.apifinanca.dto.BasMovimentacaoDto;
 import br.com.apifinanca.dto.RetornoDto;
 import br.com.apifinanca.service.BasMovimentacaoService;
@@ -67,6 +68,22 @@ public class BasLancamentoMovimentacaoController extends AbstractCrudController<
                 true,
                 "Lancamento registrado com sucesso",
                 service.lancar(request)
+        ));
+    }
+
+
+    @PostMapping({"/atualizarSaldo", "/atualizacaoSaldo"})
+    @Operation(summary = "Atualiza o saldo financeiro")
+    public ResponseEntity<RetornoDto<BasMovimentacaoDto>> atualizarSaldo(
+            @Valid @RequestBody BasMovimentacaoAtualizarDto request
+    ) {
+
+        service.atualizarSaldo(request);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(new RetornoDto<>(
+                true,
+                "Saldo Atualizado Com sucesso",null
+                
         ));
     }
 

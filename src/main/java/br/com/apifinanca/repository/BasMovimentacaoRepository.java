@@ -16,7 +16,7 @@ public interface BasMovimentacaoRepository extends JpaRepository<BasMovimentacao
             where movimentacao.competencia.id = :competenciaId
               and movimentacao.bancoConta.id = :bancoContaId
               and movimentacao.icSituacao = :icSituacao
-            order by movimentacao.nrPosicao, movimentacao.dtMovimentacao, movimentacao.id
+            order by movimentacao.dtMovimentacao, movimentacao.nrPosicao,  movimentacao.id
             """)
     List<BasMovimentacao> buscarAtivasPorCompetenciaEConta(
             @Param("competenciaId") Long competenciaId,
@@ -34,6 +34,7 @@ public interface BasMovimentacaoRepository extends JpaRepository<BasMovimentacao
               and bancoConta.banco.id = :bancoId
               and bancoConta.conta.id = :contaId
               and movimentacao.icSituacao = :icSituacao
+              order by movimentacao.dtMovimentacao, movimentacao.nrPosicao,  movimentacao.id
             """)
     List<BasMovimentacao> buscarPorCompetenciaEBancoConta(
             @Param("ano") Integer ano,

@@ -23,8 +23,8 @@ springdoc:
     path: /swagger-ui.html
 
 # --- Configuração de Logging (DEBUG e TRACE) ---
-logging:
-  level:
+#logging:
+#  level:
     # Log de queries SQL executadas pelo Hibernate
     #org.hibernate.SQL: DEBUG
     # Log dos parâmetros (bindings) passados nas queries

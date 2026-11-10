@@ -47,10 +47,8 @@ public class BasLancamentoCartaoCreditoService extends AbstractCrudService<
 
     @Transactional
     public List<BasLancamentoCartaoCreditoDto> lancar(BasLancamentoCartaoCreditoDto request) {
-        BasBancoConta bancoConta = bancoContaRepository.findById(request.bancoContaId())
-                .orElseThrow(() -> naoEncontrado("Conta bancaria", request.bancoContaId()));
-        BasTipoMovimentacao tipoMovimentacao = tipoMovimentacaoRepository.findById(request.tipoMovimentacaoId())
-                .orElseThrow(() -> naoEncontrado("Tipo de movimentacao", request.tipoMovimentacaoId()));
+        BasBancoConta bancoConta = bancoContaRepository.findById(request.bancoContaId()).orElseThrow(() -> naoEncontrado("Conta bancaria", request.bancoContaId()));
+        BasTipoMovimentacao tipoMovimentacao = tipoMovimentacaoRepository.findById(request.tipoMovimentacaoId()).orElseThrow(() -> naoEncontrado("Tipo de movimentacao", request.tipoMovimentacaoId()));
 
         int totalParcelas = request.nrParcelas();
         int escala = Math.max(2, request.vlDebito().scale());

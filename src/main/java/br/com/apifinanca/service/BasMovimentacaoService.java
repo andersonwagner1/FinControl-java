@@ -1,6 +1,7 @@
 package br.com.apifinanca.service;
 
 import br.com.apifinanca.dto.BasMovimentacaoLancamentoRequest;
+import br.com.apifinanca.dto.BasMovimentacaoAtualizarDto;
 import br.com.apifinanca.dto.BasMovimentacaoDto;
 import br.com.apifinanca.enumerador.EnumSimNao;
 import br.com.apifinanca.enumerador.EnumTipoConta;
@@ -17,6 +18,8 @@ import br.com.apifinanca.repository.BasMovimentacaoRepository;
 import br.com.apifinanca.repository.BasMovimentacaoFinalRepository;
 import br.com.apifinanca.repository.BasTipoMovimentacaoRepository;
 import jakarta.persistence.EntityManager;
+
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,6 +62,8 @@ public class BasMovimentacaoService extends AbstractCrudService<BasMovimentacao,
 
     @Transactional
     public BasMovimentacaoDto lancar(BasMovimentacaoLancamentoRequest request) {
+
+
         BasBancoConta bancoConta = bancoContaRepository.findById(request.bancoContaId()).orElseThrow(() -> naoEncontrado("Conta bancaria", request.bancoContaId()));
         BasBancoConta bancoContaDestino = request.transferenciaId() == null
                 ? null
@@ -200,6 +205,58 @@ public class BasMovimentacaoService extends AbstractCrudService<BasMovimentacao,
         calcularSaldoDaConta(competencia, bancoConta);
     }
 
+
+    /* public void adicionarRendimento(BasMovimentacaoAtualizarDto request) {
+        BasBancoConta bancoConta = bancoContaRepository.findById(request.bancoContaId()).orElseThrow(() -> naoEncontrado("Conta bancaria", request.bancoContaId()));
+        List<BasCompetencia> competencias = competenciaRepository.findByNrAnoAndNrMes(
+                request.ano(),
+                request.mes()
+        );
+
+        if (competencias.isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Competencia nao encontrada para " + request.mes()
+                            + "/" + request.ano()
+            );
+        }
+        if (competencias.size() > 1) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Mais de uma competencia encontrada para "
+                            + request.mes()
+                            + "/" + request.ano()
+            );
+        }
+
+        calcularSaldoDaConta(competencias.get(0), bancoConta);
+    }*/
+     public void atualizarSaldo(BasMovimentacaoAtualizarDto request) {
+        BasBancoConta bancoConta = bancoContaRepository.findById(request.bancoContaId()).orElseThrow(() -> naoEncontrado("Conta bancaria", request.bancoContaId()));
+        List<BasCompetencia> competencias = competenciaRepository.findByNrAnoAndNrMes(
+                request.ano(),
+                request.mes()
+        );
+
+        if (competencias.isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Competencia nao encontrada para " + request.mes()
+                            + "/" + request.ano()
+            );
+        }
+        if (competencias.size() > 1) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Mais de uma competencia encontrada para "
+                            + request.mes()
+                            + "/" + request.ano()
+            );
+        }
+
+        calcularSaldoDaConta(competencias.get(0), bancoConta);
+    }
+
     private void calcularSaldoDaConta(BasCompetencia competencia, BasBancoConta bancoConta) {
         BigDecimal saldoInicial = obterSaldoFinalAnterior(competencia, bancoConta);
         BigDecimal saldo = saldoInicial;
@@ -319,12 +376,11 @@ public class BasMovimentacaoService extends AbstractCrudService<BasMovimentacao,
         movimentacao.setInvestimento(investimento);
         movimentacao.setVinculado(movimentacaoDestino);
 
-        if(movimentacaoDestino != null) {
+        if(movimentacaoDestino == null) {
            switch (tipo) {
-            case CREDITO, RESGATE -> 
-                {
-                    movimentacao.setVlCredito(request.valor());
-                    movimentacao.setVlDebito(BigDecimal.ZERO);
+            case CREDITO, RESGATE -> {
+                movimentacao.setVlCredito(request.valor());
+                movimentacao.setVlDebito(BigDecimal.ZERO);
                 }
             case TRANSFERENCIA, DEBITO, APLICACAO -> {
                 movimentacao.setVlDebito(request.valor());
@@ -334,18 +390,15 @@ public class BasMovimentacaoService extends AbstractCrudService<BasMovimentacao,
         } else {
             switch (tipo) {
             case CREDITO, RESGATE -> {
-               movimentacao.setVlCredito(request.valor());
-                movimentacao.setVlDebito(BigDecimal.ZERO);
+                movimentacao.setVlDebito(request.valor());
+                movimentacao.setVlCredito(BigDecimal.ZERO);                
             }
             case TRANSFERENCIA, DEBITO, APLICACAO -> {
-                 movimentacao.setVlDebito(request.valor());
-                movimentacao.setVlCredito(BigDecimal.ZERO);
-                
+                movimentacao.setVlCredito(request.valor());
+                movimentacao.setVlDebito(BigDecimal.ZERO);               
             }
         }
         }
-        
-
         return movimentacao;
     }
 
@@ -355,4 +408,6 @@ public class BasMovimentacaoService extends AbstractCrudService<BasMovimentacao,
                 recurso + " nao encontrado: " + id
         );
     }
+
+   
 }

@@ -10,4 +10,3 @@ public class ApiFinancaApplication {
         SpringApplication.run(ApiFinancaApplication.class, args);
     }
 }
-
