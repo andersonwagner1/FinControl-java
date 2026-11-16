@@ -113,9 +113,7 @@ public class BasLancamentoCartaoCreditoService extends AbstractCrudService<
             parcelasSalvas.add(parcelaSalva);
         }
 
-        return parcelasSalvas.stream()
-                .map(BasLancamentoCartaoCreditoDto::from)
-                .toList();
+        return parcelasSalvas.stream().map(BasLancamentoCartaoCreditoDto::from).toList();
     }
 
     @Transactional(readOnly = true)

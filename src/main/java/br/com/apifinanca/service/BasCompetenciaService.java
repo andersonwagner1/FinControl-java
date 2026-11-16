@@ -5,7 +5,9 @@ import br.com.apifinanca.model.BasCompetencia;
 import br.com.apifinanca.repository.BasCompetenciaRepository;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -20,6 +22,23 @@ public class BasCompetenciaService extends AbstractCrudService<BasCompetencia, L
 
     public List<BasCompetenciaDto> listarPorAno(Integer ano) {
         return repository.findByNrAno(ano).stream()
+                .map(BasCompetenciaDto::from)
+                .toList();
+    }
+
+    @Transactional
+    public List<BasCompetenciaDto> cadastrarPorAno(Integer ano) {
+        List<BasCompetencia> competencias = new ArrayList<>();
+
+        for (int mes = 1; mes <= 12; mes++) {
+            BasCompetencia competencia = new BasCompetencia();
+            competencia.setNrAno(ano);
+            competencia.setNrMes(mes);
+            competencia.setDsMesAno(String.format("%02d/%d", mes, ano));
+            competencias.add(competencia);
+        }
+
+        return repository.saveAll(competencias).stream()
                 .map(BasCompetenciaDto::from)
                 .toList();
     }

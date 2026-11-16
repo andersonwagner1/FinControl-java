@@ -12,6 +12,22 @@ public interface BasMovimentacaoFinalRepository extends JpaRepository<BasMovimen
 
     List<BasMovimentacaoFinal> findByCompetenciaNrAno(Integer ano);
 
+    @Query("""
+            select movimentacaoFinal
+            from BasMovimentacaoFinal movimentacaoFinal
+            join movimentacaoFinal.competencia competencia
+            join movimentacaoFinal.bancoConta bancoConta
+            where competencia.nrAno = :ano
+              and bancoConta.banco.id = :bancoId
+              and bancoConta.conta.id = :contaId
+            order by competencia.nrMes
+            """)
+    List<BasMovimentacaoFinal> buscarPorAnoEBancoConta(
+            @Param("ano") Integer ano,
+            @Param("bancoId") Long bancoId,
+            @Param("contaId") Long contaId
+    );
+
     Optional<BasMovimentacaoFinal> findByCompetencia_IdAndBancoConta_Id(
             Long competenciaId,
             Long bancoContaId

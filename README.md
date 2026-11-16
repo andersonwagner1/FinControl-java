@@ -54,6 +54,7 @@ Especificacao OpenAPI: `http://localhost:8080/v3/api-docs`
 | GET/PUT/DELETE | `/api/categorias-movimentacao/{id}` | Consulta, atualiza ou exclui uma categoria |
 | GET/POST | `/api/competencias` | Lista ou cadastra competencias |
 | GET | `/api/competencias/ano/{ano}` | Filtra competencias pelo ano |
+| POST | `/api/competencias/ano/{ano}` | Cadastra os 12 meses da competencia do ano |
 | GET/PUT/DELETE | `/api/competencias/{id}` | Consulta, atualiza ou exclui uma competencia |
 | GET/POST | `/api/contas` | Lista ou cadastra contas |
 | GET/PUT/DELETE | `/api/contas/{id}` | Consulta, atualiza ou exclui uma conta |

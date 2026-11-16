@@ -9,8 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
@@ -37,5 +39,33 @@ public class BasCompetenciaController extends AbstractCrudController<BasCompeten
                 "Competencias listadas com sucesso",
                 service.listarPorAno(ano)
         ));
+    }
+
+    @PostMapping("/ano/{ano}")
+    @Operation(summary = "Cadastra as competencias de um ano")
+    public ResponseEntity<RetornoDto<List<BasCompetenciaDto>>> cadastrarPorAno(
+            @PathVariable Integer ano
+    ) {
+        if (ano == null || ano < 1) {
+            return ResponseEntity.badRequest().body(new RetornoDto<>(
+                    false,
+                    "Informe um ano valido",
+                    null
+            ));
+        }
+
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(new RetornoDto<>(
+                    true,
+                    "Competencias cadastradas com sucesso",
+                    service.cadastrarPorAno(ano)
+            ));
+        } catch (RuntimeException exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new RetornoDto<>(
+                    false,
+                    "Falha ao cadastrar competencias",
+                    null
+            ));
+        }
     }
 }

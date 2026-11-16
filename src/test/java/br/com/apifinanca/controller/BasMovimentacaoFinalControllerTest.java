@@ -1,6 +1,7 @@
 package br.com.apifinanca.controller;
 
 import br.com.apifinanca.dto.BasMovimentacaoFinalConsultaDto;
+import br.com.apifinanca.dto.BasMovimentacaoFinalFiltroDto;
 import br.com.apifinanca.enumerador.EnumSimNao;
 import br.com.apifinanca.service.BasMovimentacaoFinalService;
 import org.junit.jupiter.api.Test;
@@ -72,6 +73,42 @@ class BasMovimentacaoFinalControllerTest {
         mockMvc.perform(get("/api/movimentacoes-finais/consulta")
                         .param("ano", "2026")
                         .param("mes", "13")
+                        .param("bancoId", "2")
+                        .param("contaId", "3"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void deveFiltrarPorBancoContaEAno() throws Exception {
+        when(service.filtrarPorBancoContaEAno(2026, 2L, 3L)).thenReturn(List.of(
+                new BasMovimentacaoFinalFiltroDto(
+                        11,
+                        new BigDecimal("100.00"),
+                        new BigDecimal("250.00"),
+                        new BigDecimal("240.00"),
+                        EnumSimNao.SIM
+                )
+        ));
+
+        mockMvc.perform(get("/api/movimentacoes-finais/consulta/ano")
+                        .param("ano", "2026")
+                        .param("bancoId", "2")
+                        .param("contaId", "3"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.sucesso").value(true))
+                .andExpect(jsonPath("$.valor[0].nrMes").value(11))
+                .andExpect(jsonPath("$.valor[0].vlSaldoInicial").value(100.00))
+                .andExpect(jsonPath("$.valor[0].vlSaldoFinal").value(250.00))
+                .andExpect(jsonPath("$.valor[0].vlEsperado").value(240.00))
+                .andExpect(jsonPath("$.valor[0].icFechado").value("SIM"));
+
+        verify(service).filtrarPorBancoContaEAno(2026, 2L, 3L);
+    }
+
+    @Test
+    void deveRejeitarFiltroComAnoBancoOuContaInvalido() throws Exception {
+        mockMvc.perform(get("/api/movimentacoes-finais/consulta/ano")
+                        .param("ano", "0")
                         .param("bancoId", "2")
                         .param("contaId", "3"))
                 .andExpect(status().isBadRequest());

@@ -2,6 +2,7 @@ package br.com.apifinanca.service;
 
 import br.com.apifinanca.dto.BasMovimentacaoFinalConsultaDto;
 import br.com.apifinanca.dto.BasMovimentacaoFinalDto;
+import br.com.apifinanca.dto.BasMovimentacaoFinalFiltroDto;
 import br.com.apifinanca.model.BasMovimentacaoFinal;
 import br.com.apifinanca.repository.BasMovimentacaoFinalRepository;
 import jakarta.persistence.EntityManager;
@@ -29,6 +30,17 @@ public class BasMovimentacaoFinalService extends AbstractCrudService<
     public List<BasMovimentacaoFinalDto> listarPorAno(Integer ano) {
         return repository.findByCompetenciaNrAno(ano).stream()
                 .map(BasMovimentacaoFinalDto::from)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<BasMovimentacaoFinalFiltroDto> filtrarPorBancoContaEAno(
+            Integer ano,
+            Long bancoId,
+            Long contaId
+    ) {
+        return repository.buscarPorAnoEBancoConta(ano, bancoId, contaId).stream()
+                .map(BasMovimentacaoFinalFiltroDto::from)
                 .toList();
     }
 

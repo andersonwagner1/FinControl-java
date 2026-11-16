@@ -2,6 +2,7 @@ package br.com.apifinanca.controller;
 
 import br.com.apifinanca.dto.BasMovimentacaoFinalConsultaDto;
 import br.com.apifinanca.dto.BasMovimentacaoFinalDto;
+import br.com.apifinanca.dto.BasMovimentacaoFinalFiltroDto;
 import br.com.apifinanca.dto.RetornoDto;
 import br.com.apifinanca.service.BasMovimentacaoFinalService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,6 +41,27 @@ public class BasMovimentacaoFinalController extends AbstractCrudController<BasMo
                 true,
                 "Movimentacoes finais listadas com sucesso",
                 service.listarPorAno(ano)
+        ));
+    }
+
+    @GetMapping("/consulta/ano")
+    @Operation(summary = "Filtra movimentacoes finais por banco, conta e ano")
+    public ResponseEntity<RetornoDto<List<BasMovimentacaoFinalFiltroDto>>> filtrarPorBancoContaEAno(
+            @RequestParam Integer ano,
+            @RequestParam Long bancoId,
+            @RequestParam Long contaId
+    ) {
+        if (ano < 1 || bancoId < 1 || contaId < 1) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Informe ano, banco e conta positivos"
+            );
+        }
+
+        return ResponseEntity.ok(new RetornoDto<>(
+                true,
+                "Movimentacoes finais filtradas com sucesso",
+                service.filtrarPorBancoContaEAno(ano, bancoId, contaId)
         ));
     }
 
