@@ -8,10 +8,12 @@ import br.com.apifinanca.model.BasMovimentacao;
 import br.com.apifinanca.model.BasTipoMovimentacao;
 import br.com.apifinanca.service.EntityReferences;
 import jakarta.persistence.EntityManager;
+import lombok.Builder;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
+@Builder 
 public record BasMovimentacaoDto(
         Long id,
         Integer nrPosicao,

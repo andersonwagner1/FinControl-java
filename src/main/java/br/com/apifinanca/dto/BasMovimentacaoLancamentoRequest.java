@@ -3,10 +3,12 @@ package br.com.apifinanca.dto;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+@Builder 
 public record BasMovimentacaoLancamentoRequest(
         @NotNull Long bancoContaId,
         @NotNull Long tipoMovimentacaoId,

@@ -29,7 +29,7 @@ public interface BasMovimentacaoFinalRepository extends JpaRepository<BasMovimen
     );
 
     Optional<BasMovimentacaoFinal> findByCompetencia_IdAndBancoConta_Id(
-            Long competenciaId,
+            Long bancoContaIdcompetenciaId,
             Long bancoContaId
     );
 
@@ -49,4 +49,17 @@ public interface BasMovimentacaoFinalRepository extends JpaRepository<BasMovimen
             @Param("bancoId") Long bancoId,
             @Param("contaId") Long contaId
     );
+
+
+    /**
+     * Usnado para realizar consulta de relatorio do valor inicial do ano, para pegar o valor inicial do ano, que é o valor final do mes de dezembro do ano anterior
+     */
+     @Query(value = """
+                SELECT NR_MES, SUM(VL_SALDO_INICIAL) AS Saldo_INICIAL, SUM(VL_SALDO_FINAL) AS SALDO_FINAL 
+                FROM VW_RELATORIO_FINAL
+                WHERE NR_ANO = :ano
+                GROUP BY NR_MES
+                order by NR_MES
+        """, nativeQuery = true)
+    List<Object[]> buscarPorcompetenciaInicial(int ano);
 }
